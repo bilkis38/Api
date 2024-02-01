@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 from joblib import dump
-
+import time
 
 # 1. Baca Data Pertama
 data1 = pd.read_csv('data__2.csv')
@@ -54,7 +54,6 @@ print(f"Hasil perubahan yang ingin ditampilkan telah disimpan ke {file_excel_has
 print("Data Hasil Perubahan yang ingin ditampilkan:")
 print(data_perubahan_yang_akan_disimpan)
 
-
 # 14. Persiapkan Data untuk Model ANN
 # Tentukan fitur dan target
 fitur = data_perubahan_yang_akan_disimpan.drop(['Time', 'Device name'], axis=1)
@@ -67,10 +66,13 @@ X_train, X_test, y_train, y_test = train_test_split(fitur, target, test_size=0.2
 model = MLPClassifier(hidden_layer_sizes=(100, 50), max_iter=500, random_state=42)
 
 # Melatih model
-model.fit(X_train, y_train)
+print("Proses pelatihan model dimulai...")
+for i in range(0, 500, 5):  # 500 iterasi dengan jeda setiap 10 detik
+    time.sleep(5)  # Jeda 10 detik
+    model.partial_fit(X_train, y_train, classes=np.unique(y_train))
+    print(f"Proses pelatihan: {i} iterasi selesai")
 
-# Melatih model
-model.fit(X_train, y_train)
+print("Pelatihan model selesai.")
 
 # Simpan model ke file .joblib
 dump(model, 'model_ann.joblib')
